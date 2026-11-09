@@ -1,6 +1,4 @@
-# Git: Who Broke the Build?
-
-The tests passed last week and fail today. Find the guilty commit among 40, recover work you destroyed by accident, and move one fix between branches.
+<p align="center"><img src="assets/banner.svg" alt="Git: Who Broke the Build?" width="100%"></p>
 
 | | |
 |-|-|
@@ -17,9 +15,10 @@ The tests passed last week and fail today. Find the guilty commit among 40, reco
 5. Commit and push. Open the **Actions** tab of your fork (click *I understand my workflows, go ahead and enable them* the first time). The **Lab check** shows what is still missing.
 6. When the check is green, **submit the URL of your fork** in the course platform.
 
+> [!NOTE]
 > The check only looks at your answers and any files the lab asks you to commit. Your instructor reads your work and may ask you to explain any line.
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## The situation
 
@@ -29,6 +28,7 @@ Then, while you investigate, a teammate calls: *"I ran the wrong command and my 
 
 Three problems, one repository.
 
+> [!IMPORTANT]
 > **Your mission**
 > - Find the guilty commit automatically with `git bisect`
 > - Rescue three "lost" commits using the reflog
@@ -36,7 +36,7 @@ Three problems, one repository.
 
 **Time:** 45-60 min | **Cost:** free | **You need:** Git and Python 3 in your Ubuntu environment
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 0 - Set the scene
 
@@ -48,7 +48,7 @@ Fork this repository, clone your fork, and run:
 
 You get `sandbox/clipstr` with 40 commits on `main`, a `develop` branch and a `release/1.0` branch. Work in `sandbox/clipstr`.
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 1 - Recon
 
@@ -56,9 +56,10 @@ You get `sandbox/clipstr` with 40 commits on `main`, a `develop` branch and a `r
 2. `git log --oneline` shows 40 commits. Skim the messages. Can you guess which one broke it? (Write your guess, it is fine to be wrong.)
 3. The first commit ("Clipstr baseline with tests") was green. Confirm: check it out in detached HEAD (`git switch --detach HEAD~39`), run the test, and come back (`git switch main`).
 
+> [!NOTE]
 > **Predict** If you tested commits one by one from the newest to the oldest you might need up to 39 runs. If you cut the history in half each time, how many runs do you think 40 commits need at most? Write a number.
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 2 - Bisect: let Git do the search
 
@@ -80,9 +81,10 @@ git bisect run ./test.sh
 
 Save the result: run `git bisect log`, then write the **short hash** of the guilty commit into a file called `culprit.txt` in the **lab repo root** (not in the sandbox). Finish with `git bisect reset` to get back to `main`.
 
+> [!NOTE]
 > **Think** Look at the guilty commit with `git show`. Its message says "readability". What does that tell you about trusting commit messages, and what would have caught the bug before it reached `main`?
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 3 - Rescue: the work that "vanished"
 
@@ -98,9 +100,10 @@ It creates a branch `premium` with three commits, then does a `git reset --hard 
 2. Create a new branch called `rescued` pointing at the last of the three lost commits.
 3. Check that all three "Add premium tier" commits are on `rescued`.
 
+> [!WARNING]
 > **Break it** Git eventually deletes unreachable commits (`git gc`). Look up how long the reflog keeps entries by default (`git help gc`, search "gc.reflogExpire"). What does that tell you about how fast you must react?
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 4 - Cherry-pick: one fix, nothing else
 
@@ -110,9 +113,10 @@ On `develop` the whitespace fix sits between two "WIP: ... do not release" commi
 2. Switch to `release/1.0` and **cherry-pick** only that commit. Add `-x` so the new commit records where it came from.
 3. Compare the hashes of the original and the copy. Why are they different?
 
+> [!NOTE]
 > **Think** You also have a half-finished edit in the working tree when the request arrives (imagine one). Which command parks it safely so you can switch branches, and which brings it back?
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Part 5 - Prove it
 
@@ -120,7 +124,7 @@ On `develop` the whitespace fix sits between two "WIP: ... do not release" commi
 ./verify.sh
 ```
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
 ## Level up (optional)
 
