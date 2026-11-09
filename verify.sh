@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run with: ./verify.sh
 set -uo pipefail
-ROOT="$(cd "$(dirname "$0")" && pwd)"; SB="$ROOT/sandbox/clipstr"
+ROOT="$(cd "$(dirname "$0")" && pwd)"; SB="$ROOT/sandbox/clippy"
 [ -d "$SB/.git" ] || { echo "Run ./setup.sh first"; exit 1; }
 g() { git -C "$SB" "$@"; }
 pass=0; failn=0

@@ -48,7 +48,7 @@ Fork this repository, clone your fork, and run:
 ./setup.sh
 ```
 
-You get `sandbox/clipstr` with 40 commits on `main`, a `develop` branch and a `release/1.0` branch. Work in `sandbox/clipstr`.
+You get `sandbox/clippy` with 40 commits on `main`, a `develop` branch and a `release/1.0` branch. Work in `sandbox/clippy`.
 
 <p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
@@ -58,7 +58,7 @@ You get `sandbox/clipstr` with 40 commits on `main`, a `develop` branch and a `r
 
 1. Run `./test.sh`. Read the failure message carefully.
 2. `git log --oneline` shows 40 commits. Skim the messages. Can you guess which one broke it? (Write your guess, it is fine to be wrong.)
-3. The first commit ("Clipstr baseline with tests") was green. Confirm: check it out in detached HEAD (`git switch --detach HEAD~39`), run the test, and come back (`git switch main`).
+3. The first commit ("Clippy baseline with tests") was green. Confirm: check it out in detached HEAD (`git switch --detach HEAD~39`), run the test, and come back (`git switch main`).
 
 > [!NOTE]
 > **Predict** If you tested commits one by one from the newest to the oldest you might need up to 39 runs. If you cut the history in half each time, how many runs do you think 40 commits need at most? Write a number.

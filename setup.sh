@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Creates the Clipstr repository with 40 commits in ./sandbox/clipstr (re-run to start over).
+# Creates the Clippy repository with 40 commits in ./sandbox/clippy (re-run to start over).
 set -euo pipefail
 cd "$(dirname "$0")"
-rm -rf sandbox; mkdir -p sandbox/clipstr; cd sandbox/clipstr
+rm -rf sandbox; mkdir -p sandbox/clippy; cd sandbox/clippy
 git init -q -b main; git config commit.gpgsign false
 git config user.name "$(git config --global user.name 2>/dev/null || echo You)"; git config user.email "$(git config --global user.email 2>/dev/null || echo you@example.com)"
-as() { local n="$1"; shift; GIT_AUTHOR_NAME="$n" GIT_AUTHOR_EMAIL="x@clipstr.dev" GIT_COMMITTER_NAME="$n" GIT_COMMITTER_EMAIL="x@clipstr.dev" "$@"; }
+as() { local n="$1"; shift; GIT_AUTHOR_NAME="$n" GIT_AUTHOR_EMAIL="x@clippy.dev" GIT_COMMITTER_NAME="$n" GIT_COMMITTER_EMAIL="x@clippy.dev" "$@"; }
 
 cat > shorten.py <<'P'
 import hashlib
@@ -27,7 +27,7 @@ print("all tests passed")
 PY
 T
 chmod +x test.sh
-git add -A; as "Maya Santos" git commit -q -m "Clipstr baseline with tests"
+git add -A; as "Maya Santos" git commit -q -m "Clippy baseline with tests"
 
 msgs=("Add /stats endpoint" "Document environment variables" "Add health check" "Log request ids" "Handle empty urls" "Add favicon route" "Bump fastapi" "Add CORS settings" "Tidy imports" "Add redirect counter"
       "Cache hot codes" "Add admin page skeleton" "Rename helper functions" "Add readme badges" "Fix typo in error text" "Add rate limit config" "Split router into modules" "Add structured logging" "Add metrics endpoint" "Update dependencies"

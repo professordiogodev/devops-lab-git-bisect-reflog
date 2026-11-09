@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simulates a tired developer: three commits on a branch, then a reset --hard that throws them away.
 set -euo pipefail
-cd "$(dirname "$0")/sandbox/clipstr"
+cd "$(dirname "$0")/sandbox/clippy"
 git switch -q main
 git switch -q -c premium
 echo "tiers: free, pro" > tiers.md;       git add -A; git commit -q -m "Add premium tier: plans"
