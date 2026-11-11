@@ -2,22 +2,30 @@
 
 ## The situation
 
-Tuesday. The nightly test run is red. It was green last week, and since then 40 commits landed from three people. The release manager: *"Find the commit that broke it. I do not want to read 40 diffs."*
+```text
+MISSION BRIEFING - Operation Green Build
+Festival day : 40 food trucks print a Clippy QR code on their menu boards
+Status       : the nightly tests are RED
+Squad        : you, one release manager, two developers
+Levels       : 3          Time limit : 45-60 minutes          Lives : unlimited (git remembers)
+```
 
-Then, while you investigate, a teammate calls: *"I ran the wrong command and my premium-tier branch is empty. Three days of work. Please tell me it is not gone."* And the release manager needs one small fix from `develop` on the release branch, without any of the unfinished work next to it.
+The nightly run was green last week. Since then, 40 commits landed from three people. The release manager's order: *"Find the commit that broke it. I am not reading 40 diffs."*
 
-Three problems, one repository.
+While you work, a developer calls in panic: *"I ran the wrong command and my premium-tier branch is empty. Three days of work!"* And before the festival opens, one small fix from `develop` must reach `release/1.0`, **without** the unfinished work next to it.
+
+Three levels, one repository. Each level has a boss question at the end.
 
 > **Your mission**
-> - Find the guilty commit automatically with `git bisect`
-> - Rescue three "lost" commits using the reflog
-> - Move exactly one fix to the release branch with `git cherry-pick`
+> - **Level 1:** find the guilty commit automatically with `git bisect`
+> - **Level 2:** rescue three "lost" commits using the reflog
+> - **Level 3:** move exactly one fix to the release branch with `git cherry-pick`
 
 **Time:** 45-60 min | **Cost:** free | **You need:** Git and Python 3 in your Ubuntu environment
 
 ---
 
-## Part 0 - Set the scene
+## Level 0 - Boot the game
 
 Fork this repository, clone your fork, and run:
 
@@ -25,21 +33,23 @@ Fork this repository, clone your fork, and run:
 ./setup.sh
 ```
 
-You get `sandbox/clippy` with 40 commits on `main`, a `develop` branch and a `release/1.0` branch. Work in `sandbox/clippy`.
+You get `sandbox/clippy` with 40 commits on `main`, a `develop` branch and a `release/1.0` branch. Work in `sandbox/clippy` unless a level says otherwise.
+
+Before you start, look around:
+
+1. Run `./test.sh` and read the failure message carefully.
+2. `git log --oneline` shows 40 commits. Skim the messages and **write your guess** for the guilty one. It is fine to be wrong, and it makes the next level funnier.
+3. The first commit ("Clippy baseline with tests") was green. Confirm it: check it out in detached HEAD (`git switch --detach HEAD~39`), run the test, and come back (`git switch main`).
+
+> **Predict** If you tested commits one by one from newest to oldest you might need up to 39 runs. If you cut the history in half each time, how many runs do 40 commits need at most? Write a number. It is your bet for Level 1.
 
 ---
 
-## Part 1 - Recon
+## Level 1 - Bisect: let Git search
 
-1. Run `./test.sh`. Read the failure message carefully.
-2. `git log --oneline` shows 40 commits. Skim the messages. Can you guess which one broke it? (Write your guess, it is fine to be wrong.)
-3. The first commit ("Clippy baseline with tests") was green. Confirm: check it out in detached HEAD (`git switch --detach HEAD~39`), run the test, and come back (`git switch main`).
+<!-- gif: recon -->
 
-> **Predict** If you tested commits one by one from the newest to the oldest you might need up to 39 runs. If you cut the history in half each time, how many runs do you think 40 commits need at most? Write a number.
-
----
-
-## Part 2 - Bisect: let Git do the search
+Play it by hand first:
 
 ```bash
 git bisect start
@@ -47,9 +57,9 @@ git bisect bad                    # the commit you are on is broken
 git bisect good HEAD~39           # the baseline was fine
 ```
 
-Git checks out a commit in the middle. Run `./test.sh` yourself, then tell Git `git bisect good` or `git bisect bad`. Repeat until Git prints "is the first bad commit". Count the steps.
+Git checks out a commit in the middle. Run `./test.sh` yourself, then tell Git `git bisect good` or `git bisect bad`. Repeat until Git prints "is the first bad commit". Count the steps and compare them with your bet.
 
-Then do it again, **fully automatic**, because the test already returns the right exit code:
+Now the speed run, **fully automatic**, because the test already returns the right exit code:
 
 ```bash
 git bisect reset
@@ -57,13 +67,13 @@ git bisect start HEAD HEAD~39
 git bisect run ./test.sh
 ```
 
-Save the result: run `git bisect log`, then write the **short hash** of the guilty commit into a file called `culprit.txt` in the **lab repo root** (not in the sandbox). Finish with `git bisect reset` to get back to `main`.
+Save your score: run `git bisect log`, then write the **short hash** of the guilty commit into a file called `culprit.txt` in the **lab repo root** (not in the sandbox). Finish with `git bisect reset` to get back to `main`.
 
-> **Think** Look at the guilty commit with `git show`. Its message says "readability". What does that tell you about trusting commit messages, and what would have caught the bug before it reached `main`?
+> **Think** *Boss question.* Look at the guilty commit with `git show`. Its message says "readability". What does that tell you about trusting commit messages, and what would have caught the bug before it reached `main`?
 
 ---
 
-## Part 3 - Rescue: the work that "vanished"
+## Level 2 - Rescue: the work that "vanished"
 
 In the **lab repo** (not the sandbox), run:
 
@@ -71,33 +81,35 @@ In the **lab repo** (not the sandbox), run:
 ./oops.sh
 ```
 
-It creates a branch `premium` with three commits, then does a `git reset --hard main` on it. Go to the sandbox and look: `git log --oneline premium` shows nothing special. The work is "gone".
+It creates a branch `premium` with three commits, then runs `git reset --hard main` on it. Go to the sandbox and look: `git log --oneline premium` shows nothing special. The work is "gone".
 
 1. `git reflog` shows where `HEAD` has been. Also try `git reflog show premium`. Find the entry from **before** the reset.
 2. Create a new branch called `rescued` pointing at the last of the three lost commits.
 3. Check that all three "Add premium tier" commits are on `rescued`.
 
-> **Break it** Git eventually deletes unreachable commits (`git gc`). Look up how long the reflog keeps entries by default (`git help gc`, search "gc.reflogExpire"). What does that tell you about how fast you must react?
+> **Break it** *Boss question.* Git eventually deletes unreachable commits (`git gc`). Look up how long the reflog keeps entries by default (`git help gc`, search "gc.reflogExpire"). What does that tell you about how fast you must react?
 
 ---
 
-## Part 4 - Cherry-pick: one fix, nothing else
+## Level 3 - Cherry-pick: one fix, nothing else
 
-On `develop` the whitespace fix sits between two "WIP: ... do not release" commits. A merge of `develop` would ship the unfinished work.
+On `develop` the whitespace fix sits between two "WIP: ... do not release" commits. A merge of `develop` would ship the unfinished work to forty food trucks.
 
 1. Find the fix: `git log --oneline develop`.
 2. Switch to `release/1.0` and **cherry-pick** only that commit. Add `-x` so the new commit records where it came from.
 3. Compare the hashes of the original and the copy. Why are they different?
 
-> **Think** You also have a half-finished edit in the working tree when the request arrives (imagine one). Which command parks it safely so you can switch branches, and which brings it back?
+> **Think** *Boss question.* A half-finished edit is sitting in your working tree when the request arrives (imagine one). Which command parks it safely so you can switch branches, and which brings it back?
 
 ---
 
-## Part 5 - Prove it
+## Final boss - Prove it
 
 ```bash
 ./verify.sh
 ```
+
+All checks green means the festival opens on time.
 
 ---
 
