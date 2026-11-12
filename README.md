@@ -71,7 +71,7 @@ Before you start, look around:
 
 ## Level 1 - Bisect: let Git search
 
-<p align="center"><img src="assets/gifs/recon.gif" width="300" alt="A real terminal recording: git bisect run tests commits automatically and prints the first bad commit"></p>
+<p align="center"><img src="assets/gifs/recon.gif" width="640" alt="A real terminal recording: git bisect run tests commits automatically and prints the first bad commit"></p>
 
 Play it by hand first:
 
